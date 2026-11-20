@@ -1,0 +1,96 @@
+{
+  "id": "/",
+  "name": "VIDYORA",
+  "short_name": "VIDYORA",
+  "description": "Learning Beyond Textbooks. Difficult concepts ko videos, animations aur AI ke saath easily samjho.",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "theme_color": "#0B1221",
+  "background_color": "#0B1221",
+  "categories": ["education", "books", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explore Classes",
+      "short_name": "Explore",
+      "description": "Class 1-12, College aur Competitive Exam lessons",
+      "url": "/?view=explore",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "AI Study Buddy",
+      "short_name": "AI Buddy",
+      "description": "Simple Hinglish mein concepts aur doubts samjho",
+      "url": "/?view=ai-suite&tool=study-buddy",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "AI Doubt Solver",
+      "short_name": "Doubts",
+      "description": "Question photo upload karke step-by-step solution paao",
+      "url": "/?view=ai-suite&tool=doubt-solver",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "AI Notes",
+      "short_name": "Notes",
+      "description": "Revision notes, formula sheets aur mind maps banao",
+      "url": "/?view=ai-suite&tool=notes",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

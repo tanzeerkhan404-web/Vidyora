@@ -1,0 +1,809 @@
+{
+  "entities": {
+    "VideoLessonDoc": {
+      "title": "VideoLessonDoc",
+      "description": "An administrator-managed video lesson stored in Firestore with curriculum placement, validated video URL, thumbnail, optional study notes, and publish status.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Lesson title displayed to students."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 1500,
+          "description": "Short Hinglish/English summary of what the video teaches."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["school", "college", "competitive", "gk"],
+          "description": "Primary learning track category."
+        },
+        "className": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60,
+          "description": "Class name (e.g. Class 1 to Class 12) or track level."
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80,
+          "description": "Subject name such as Mathematics, Physics, Chemistry, Biology."
+        },
+        "chapterNumber": {
+          "type": "number",
+          "description": "Numeric chapter sequence order (1 to 50)."
+        },
+        "chapterName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120,
+          "description": "Chapter title."
+        },
+        "duration": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 20,
+          "description": "Formatted duration string such as 12:40."
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["Beginner", "Intermediate", "Advanced"],
+          "description": "Lesson difficulty tier."
+        },
+        "videoUrl": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 500,
+          "pattern": "^https://.*$",
+          "description": "Legitimate HTTPS YouTube or direct HTML5 video URL."
+        },
+        "thumbnailUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 350000,
+          "description": "HTTPS thumbnail URL, built-in /src/assets path, or resized JPEG/WebP data URI."
+        },
+        "notesContent": {
+          "type": "string",
+          "maxLength": 8000,
+          "description": "Optional downloadable Hinglish revision notes text."
+        },
+        "practiceQuestions": {
+          "type": "array",
+          "description": "Optional bounded array of up to 10 practice MCQs."
+        },
+        "published": {
+          "type": "boolean",
+          "description": "Whether the lesson is visible to students."
+        },
+        "isDemo": {
+          "type": "boolean",
+          "description": "Marks demonstration sample content clearly."
+        },
+        "createdBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the administrator who created the lesson."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of lesson creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "category",
+        "className",
+        "subject",
+        "chapterNumber",
+        "chapterName",
+        "duration",
+        "difficulty",
+        "videoUrl",
+        "thumbnailUrl",
+        "published",
+        "isDemo",
+        "createdBy",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "StudentProgressDoc": {
+      "title": "StudentProgressDoc",
+      "description": "Private student learning progress storing completed lessons, favourite lessons, and recently watched history without PII.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Owner Firebase Auth UID."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Student first name or display label."
+        },
+        "level": {
+          "type": "string",
+          "enum": [
+            "Class 1-5",
+            "Class 6-8",
+            "Class 9-10",
+            "Class 11-12",
+            "College",
+            "Competitive Exams"
+          ],
+          "description": "Preferred learning level."
+        },
+        "completedLessonIds": {
+          "type": "array",
+          "description": "Bounded list (max 500) of completed lesson IDs."
+        },
+        "favouriteLessonIds": {
+          "type": "array",
+          "description": "Bounded list (max 200) of saved favourite lesson IDs."
+        },
+        "recentLessonIds": {
+          "type": "array",
+          "description": "Bounded list (max 50) of recently watched lesson IDs."
+        },
+        "subjectsOfInterest": {
+          "type": "array",
+          "description": "Optional bounded list (max 12) of student subjects of interest."
+        },
+        "weeklyLessonGoal": {
+          "type": "number",
+          "description": "Optional weekly completed lesson goal (1 to 50)."
+        },
+        "studyActivityDates": {
+          "type": "array",
+          "description": "Optional bounded list (max 60) of YYYY-MM-DD active study dates for streak calculation."
+        },
+        "downloadedNoteIds": {
+          "type": "array",
+          "description": "Optional bounded list (max 200) of downloaded note IDs."
+        },
+        "completedPlanBlockIds": {
+          "type": "array",
+          "description": "Optional bounded list (max 50) of completed study planner block IDs."
+        },
+        "studyPlanJson": {
+          "type": "string",
+          "maxLength": 20000,
+          "description": "Optional bounded JSON string of the student's active study plan."
+        },
+        "accountStatus": {
+          "type": "string",
+          "enum": ["active", "suspended"],
+          "description": "Account standing managed by authorized administrators."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last progress update."
+        }
+      },
+      "required": [
+        "userId",
+        "displayName",
+        "level",
+        "completedLessonIds",
+        "favouriteLessonIds",
+        "recentLessonIds",
+        "updatedAt"
+      ]
+    },
+    "StudyChatDoc": {
+      "title": "StudyChatDoc",
+      "description": "Private AI Study Buddy conversation stored for logged-in verified students without sensitive personal information.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Owner Firebase Auth UID."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Short sanitized conversation title derived from the student's first study question."
+        },
+        "subject": {
+          "type": "string",
+          "enum": [
+            "Mathematics",
+            "Physics",
+            "Chemistry",
+            "Biology",
+            "English",
+            "History",
+            "Geography",
+            "Computer Science",
+            "General Knowledge"
+          ],
+          "description": "Selected study subject."
+        },
+        "level": {
+          "type": "string",
+          "enum": [
+            "Beginner",
+            "School level",
+            "College level",
+            "Competitive exam level"
+          ],
+          "description": "Selected learning level."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "simple",
+            "step-by-step",
+            "real-life",
+            "short-summary",
+            "teacher"
+          ],
+          "description": "Selected explanation mode."
+        },
+        "messages": {
+          "type": "array",
+          "description": "Bounded list (max 40) of sanitized educational Q&A message maps."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of conversation creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last message update."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "subject",
+        "level",
+        "mode",
+        "messages",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SavedNoteDoc": {
+      "title": "SavedNoteDoc",
+      "description": "Private AI-generated or edited study note saved by a verified student without sensitive personal information.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Owner Firebase Auth UID."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "description": "Sanitized study note title."
+        },
+        "className": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Selected class or study track."
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Selected subject."
+        },
+        "chapterName": {
+          "type": "string",
+          "maxLength": 140,
+          "description": "Optional chapter name."
+        },
+        "noteType": {
+          "type": "string",
+          "enum": [
+            "Detailed Notes",
+            "Short Notes",
+            "Quick Revision",
+            "Formula Sheets",
+            "Important Definitions",
+            "Mind Maps",
+            "One-page Infographics",
+            "Question and Answer Notes"
+          ],
+          "description": "Selected study note format."
+        },
+        "designStyle": {
+          "type": "string",
+          "enum": ["handwritten", "professional", "infographic", "minimal"],
+          "description": "Selected visual presentation theme."
+        },
+        "payloadJson": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80000,
+          "description": "Bounded JSON string of sanitized structured study notes."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of note creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last note update."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "className",
+        "subject",
+        "noteType",
+        "designStyle",
+        "payloadJson",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "QuizAttemptDoc": {
+      "title": "QuizAttemptDoc",
+      "description": "Private student quiz attempt record storing score breakdown, time taken, weak topics, and sanitized quiz snapshot without PII.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Owner Firebase Auth UID."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "description": "Quiz title or topic label."
+        },
+        "topic": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "description": "Primary quiz topic."
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Quiz subject."
+        },
+        "level": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Selected class, college track, or exam."
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["Easy", "Medium", "Hard", "Mixed"],
+          "description": "Quiz difficulty setting."
+        },
+        "score": {
+          "type": "number",
+          "description": "Correct answers earned (0 to 50)."
+        },
+        "total": {
+          "type": "number",
+          "description": "Total questions in the quiz (1 to 50)."
+        },
+        "percentage": {
+          "type": "number",
+          "description": "Score percentage (0 to 100)."
+        },
+        "timeTakenSeconds": {
+          "type": "number",
+          "description": "Elapsed completion time in seconds."
+        },
+        "payloadJson": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60000,
+          "description": "Bounded JSON string containing sanitized attempt details and quiz snapshot."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of quiz completion."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "topic",
+        "subject",
+        "level",
+        "difficulty",
+        "score",
+        "total",
+        "percentage",
+        "timeTakenSeconds",
+        "payloadJson",
+        "createdAt"
+      ]
+    },
+    "PublishedQuizDoc": {
+      "title": "PublishedQuizDoc",
+      "description": "Administrator-reviewed, edited, and published practice quiz visible to VIDYORA students.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Published quiz title."
+        },
+        "track": {
+          "type": "string",
+          "enum": ["school", "college", "competitive"],
+          "description": "Educational track."
+        },
+        "level": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60,
+          "description": "Class, college degree, or competitive exam."
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80,
+          "description": "Quiz subject."
+        },
+        "chapterName": {
+          "type": "string",
+          "maxLength": 140,
+          "description": "Optional chapter name."
+        },
+        "topic": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 160,
+          "description": "Quiz topic."
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["Easy", "Medium", "Hard", "Mixed"],
+          "description": "Quiz difficulty level."
+        },
+        "timerMinutes": {
+          "type": "number",
+          "description": "Recommended timer duration in minutes (0 to 120)."
+        },
+        "published": {
+          "type": "boolean",
+          "description": "Whether students can browse and attempt this quiz."
+        },
+        "payloadJson": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80000,
+          "description": "Bounded JSON string containing verified quiz questions and answer keys."
+        },
+        "createdBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the administrator who created this quiz."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of quiz creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last quiz edit."
+        }
+      },
+      "required": [
+        "title",
+        "track",
+        "level",
+        "subject",
+        "topic",
+        "difficulty",
+        "timerMinutes",
+        "published",
+        "payloadJson",
+        "createdBy",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "StudyResourceDoc": {
+      "title": "StudyResourceDoc",
+      "description": "Administrator-managed study notes and PDF resources organized by class, subject, and chapter.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "description": { "type": "string", "minLength": 5, "maxLength": 1500 },
+        "category": { "type": "string", "enum": ["school", "college", "competitive", "gk"] },
+        "className": { "type": "string", "minLength": 2, "maxLength": 60 },
+        "subject": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "chapterName": { "type": "string", "minLength": 2, "maxLength": 140 },
+        "format": { "type": "string", "minLength": 2, "maxLength": 40 },
+        "pdfUrl": { "type": "string", "maxLength": 500000 },
+        "pdfFileName": { "type": "string", "maxLength": 120 },
+        "contentText": { "type": "string", "maxLength": 15000 },
+        "published": { "type": "boolean" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "title", "description", "category", "className", "subject",
+        "chapterName", "format", "published", "createdBy", "createdAt", "updatedAt"
+      ]
+    },
+    "PlatformCategoryDoc": {
+      "title": "PlatformCategoryDoc",
+      "description": "Administrator-managed learning category, subject, chapter, and tag definition.",
+      "type": "object",
+      "properties": {
+        "track": { "type": "string", "enum": ["school", "college", "competitive", "gk"] },
+        "name": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "subjects": { "type": "array", "description": "Bounded list (max 30) of subject names." },
+        "chapters": { "type": "array", "description": "Bounded list (max 50) of chapter names." },
+        "tags": { "type": "array", "description": "Bounded list (max 20) of category tags." },
+        "active": { "type": "boolean" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["track", "name", "subjects", "chapters", "tags", "active", "createdBy", "createdAt", "updatedAt"]
+    },
+    "PlatformSettingsDoc": {
+      "title": "PlatformSettingsDoc",
+      "description": "Publicly readable, admin-managed site branding, announcements, featured items, contact info, and maintenance banner (never stores secrets).",
+      "type": "object",
+      "properties": {
+        "siteTitle": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "siteDescription": { "type": "string", "minLength": 5, "maxLength": 400 },
+        "announcementEnabled": { "type": "boolean" },
+        "announcementText": { "type": "string", "maxLength": 300 },
+        "featuredLessonIds": { "type": "array", "description": "Bounded list (max 10) of featured lesson IDs." },
+        "featuredSubjects": { "type": "array", "description": "Bounded list (max 12) of featured subjects." },
+        "contactEmail": { "type": "string", "maxLength": 120 },
+        "supportNote": { "type": "string", "maxLength": 300 },
+        "maintenanceEnabled": { "type": "boolean" },
+        "maintenanceMessage": { "type": "string", "maxLength": 300 },
+        "updatedBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "siteTitle", "siteDescription", "announcementEnabled", "announcementText",
+        "featuredLessonIds", "featuredSubjects", "contactEmail", "supportNote",
+        "maintenanceEnabled", "maintenanceMessage", "updatedBy", "updatedAt"
+      ]
+    },
+    "AdminAuditLogDoc": {
+      "title": "AdminAuditLogDoc",
+      "description": "Immutable administrator activity log entry for auditability and security accountability.",
+      "type": "object",
+      "properties": {
+        "adminUid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "adminLabel": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "action": { "type": "string", "minLength": 2, "maxLength": 60 },
+        "targetType": { "type": "string", "enum": ["lesson", "note", "quiz", "student", "category", "settings"] },
+        "targetId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "summary": { "type": "string", "minLength": 3, "maxLength": 300 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["adminUid", "adminLabel", "action", "targetType", "targetId", "summary", "createdAt"]
+    },
+    "AdminRegistryDoc": {
+      "title": "AdminRegistryDoc",
+      "description": "Registry document identifying an authorized VIDYORA content administrator.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the administrator."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin"],
+          "description": "Fixed administrator role marker."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when admin access was granted."
+        }
+      },
+      "required": ["uid", "role", "createdAt"]
+    },
+    "MembershipPlanDoc": {
+      "title": "MembershipPlanDoc",
+      "description": "Administrator-managed membership tier pricing, AI limits, benefits, and promotional offers.",
+      "type": "object",
+      "properties": {
+        "planId": { "type": "string", "enum": ["free", "student", "pro"] },
+        "name": { "type": "string", "minLength": 2, "maxLength": 60 },
+        "priceInr": { "type": "number" },
+        "aiDailyLimit": { "type": "number" },
+        "offerActive": { "type": "boolean" },
+        "active": { "type": "boolean" },
+        "payloadJson": { "type": "string", "minLength": 2, "maxLength": 20000 },
+        "updatedBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["planId", "name", "priceInr", "aiDailyLimit", "offerActive", "active", "payloadJson", "updatedBy", "updatedAt"]
+    },
+    "LearningPackageDoc": {
+      "title": "LearningPackageDoc",
+      "description": "Administrator-managed learning package (School, College, Competitive Exams, or custom track).",
+      "type": "object",
+      "properties": {
+        "packageId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 3, "maxLength": 80 },
+        "categoryLink": { "type": "string", "enum": ["school", "college", "competitive", "gk"] },
+        "active": { "type": "boolean" },
+        "payloadJson": { "type": "string", "minLength": 2, "maxLength": 30000 },
+        "updatedBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["packageId", "name", "categoryLink", "active", "payloadJson", "updatedBy", "updatedAt"]
+    },
+    "LectureDoc": {
+      "title": "LectureDoc",
+      "description": "Members-only YouTube, VIDYORA Original, or Teacher-submitted lecture requiring admin approval.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 4, "maxLength": 160 },
+        "description": { "type": "string", "minLength": 10, "maxLength": 1500 },
+        "sourceType": { "type": "string", "enum": ["youtube", "original", "teacher"] },
+        "category": { "type": "string" },
+        "className": { "type": "string", "minLength": 2, "maxLength": 60 },
+        "subject": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "chapterNumber": { "type": "number" },
+        "chapterName": { "type": "string", "minLength": 2, "maxLength": 140 },
+        "teacherName": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "duration": { "type": "string", "minLength": 3, "maxLength": 20 },
+        "videoUrl": { "type": "string", "minLength": 8, "maxLength": 500, "pattern": "^https://.*$" },
+        "thumbnailUrl": { "type": "string", "minLength": 1, "maxLength": 350000 },
+        "featured": { "type": "boolean" },
+        "approvalStatus": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "published": { "type": "boolean" },
+        "submittedByUid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "sourceType", "category", "className", "subject", "chapterNumber", "chapterName", "teacherName", "duration", "videoUrl", "thumbnailUrl", "featured", "approvalStatus", "published", "submittedByUid", "createdAt", "updatedAt"]
+    },
+    "TeacherDoc": {
+      "title": "TeacherDoc",
+      "description": "Admin-verified teacher registry granting submission privileges for pending lectures.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "specialization": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "verified": { "type": "boolean" },
+        "updatedBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "specialization", "verified", "updatedBy", "updatedAt"]
+    },
+    "MemberMembershipDoc": {
+      "title": "MemberMembershipDoc",
+      "description": "Verified membership eligibility record managed strictly by administrators or verified payment backend.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "planId": { "type": "string", "enum": ["free", "student", "pro"] },
+        "status": { "type": "string", "enum": ["active", "inactive", "expired"] },
+        "updatedBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "planId", "status", "updatedBy", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/video_lessons/{lessonId}": {
+      "schema": { "$ref": "#/entities/VideoLessonDoc" },
+      "description": "Database-backed video lessons published by VIDYORA administrators."
+    },
+    "/student_progress/{userId}": {
+      "schema": { "$ref": "#/entities/StudentProgressDoc" },
+      "description": "Per-student private lesson progress, favourites, and recently watched history."
+    },
+    "/study_chats/{chatId}": {
+      "schema": { "$ref": "#/entities/StudyChatDoc" },
+      "description": "Per-student private AI Study Buddy conversation history without PII."
+    },
+    "/saved_notes/{noteId}": {
+      "schema": { "$ref": "#/entities/SavedNoteDoc" },
+      "description": "Per-student private saved AI-generated study notes without PII."
+    },
+    "/quiz_attempts/{attemptId}": {
+      "schema": { "$ref": "#/entities/QuizAttemptDoc" },
+      "description": "Per-student private quiz attempt history, scores, and weak-topic summaries."
+    },
+    "/published_quizzes/{quizId}": {
+      "schema": { "$ref": "#/entities/PublishedQuizDoc" },
+      "description": "Administrator-reviewed and published quizzes available to VIDYORA learners."
+    },
+    "/study_resources/{resourceId}": {
+      "schema": { "$ref": "#/entities/StudyResourceDoc" },
+      "description": "Administrator-managed study notes and PDF resources."
+    },
+    "/platform_categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/PlatformCategoryDoc" },
+      "description": "Administrator-managed curriculum categories, subjects, chapters, and tags."
+    },
+    "/platform_settings/{settingId}": {
+      "schema": { "$ref": "#/entities/PlatformSettingsDoc" },
+      "description": "Publicly readable platform branding, announcements, and maintenance notice settings."
+    },
+    "/admin_audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AdminAuditLogDoc" },
+      "description": "Immutable administrator activity audit logs."
+    },
+    "/membership_plans/{planId}": {
+      "schema": { "$ref": "#/entities/MembershipPlanDoc" },
+      "description": "Administrator-managed VIDYORA membership plans, pricing, limits, and active offers."
+    },
+    "/learning_packages/{packageId}": {
+      "schema": { "$ref": "#/entities/LearningPackageDoc" },
+      "description": "Administrator-managed VIDYORA learning packages (School, College, Competitive Exams)."
+    },
+    "/lectures/{lectureId}": {
+      "schema": { "$ref": "#/entities/LectureDoc" },
+      "description": "Members-only YouTube, VIDYORA Original, and Teacher-submitted lectures."
+    },
+    "/teachers/{teacherId}": {
+      "schema": { "$ref": "#/entities/TeacherDoc" },
+      "description": "Admin-verified teacher registry."
+    },
+    "/member_memberships/{userId}": {
+      "schema": { "$ref": "#/entities/MemberMembershipDoc" },
+      "description": "Verified paid membership access records."
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminRegistryDoc" },
+      "description": "Trusted administrator role registry documents."
+    }
+  }
+}

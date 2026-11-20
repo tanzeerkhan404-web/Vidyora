@@ -1,0 +1,6 @@
+{
+  "name": "VIDYORA — Learning Beyond Textbooks",
+  "description": "AI-powered Hinglish EdTech platform for school students (Class 1-12), college learners, and competitive exam aspirants with visual video lessons, interactive animations, AI Study Buddy, Doubt Solver, Notes, Quiz & Study Planner.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

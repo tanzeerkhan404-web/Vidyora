@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="maskableBg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0B1221" />
+      <stop offset="55%" stop-color="#131E35" />
+      <stop offset="100%" stop-color="#1E1B4B" />
+    </linearGradient>
+    <linearGradient id="maskableAccent" x1="120" y1="120" x2="392" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7C3AED" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+  </defs>
+  <!-- Full-bleed background for Android adaptive maskable clipping -->
+  <rect width="512" height="512" fill="url(#maskableBg)" />
+  <circle cx="256" cy="256" r="176" fill="url(#maskableAccent)" fill-opacity="0.18" />
+  <!-- Core V-mark strictly within central 68% safe zone (~16% margin on every side) -->
+  <path
+    d="M170 184L256 346L342 184"
+    stroke="#FFFFFF"
+    stroke-width="34"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <circle cx="256" cy="192" r="29" fill="#8B5CF6" />
+  <circle cx="256" cy="192" r="13" fill="#DBEAFE" />
+</svg>
